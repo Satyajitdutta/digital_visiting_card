@@ -209,11 +209,6 @@
 
     unlockCard();
     showToast(`Welcome ${name.split(' ')[0]}! Great to connect!`);
-
-    setTimeout(() => {
-      const msg = encodeURIComponent(`🔔 NEW LEAD — Amit's Card\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
-      window.open(`https://wa.me/${YOUR_WA}?text=${msg}`, '_blank');
-    }, 1500);
   }
 
   function skipGate() { unlockCard(); }
