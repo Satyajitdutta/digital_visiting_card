@@ -202,16 +202,16 @@
     if (!name || !phone) { err.style.display='block'; return; }
     err.style.display = 'none';
 
-    // 1. Fire WhatsApp IMMEDIATELY (must be the first action to avoid popup block)
+    // 1. OPEN WHATSAPP IMMEDIATELY (This bypasses the mobile popup blocker)
     const msg = encodeURIComponent(`🔔 NEW LEAD — Pithonix Card Scan\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
     window.open(`https://wa.me/${YOUR_WA}?text=${msg}`, '_blank');
 
-    // 2. Unlock the card UI
+    // 2. UNLOCK THE CARD
     unlockCard();
     showToast(`Welcome ${name.split(' ')[0]}! Opening profile...`);
 
-    // 3. Send data to Formspree in the background
-    if (FORMSPREE_ID !== 'mvzwkqyl') {
+    // 3. SEND TO FORMSPREE IN THE BACKGROUND
+    if (FORMSPREE_ID !== 'YOUR_FORM_ID') {
       fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ name, phone, email: email||'Not provided', organisation: org||'Not provided', card:'Satyajit Dutta — card.pithonix.ai', time: new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) })
