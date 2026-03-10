@@ -7,485 +7,128 @@
 <meta name="description" content="Advisor, Pithonix.ai — Enterprise AI Platform powered by the JEET Framework">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
   :root {
-    --black: #050608;
-    --surface: #0d0f14;
-    --card: #12151c;
-    --border: #1e2330;
-    --cyan: #00e5ff;
-    --cyan-dim: rgba(0,229,255,0.12);
-    --cyan-glow: rgba(0,229,255,0.35);
-    --white: #f0f4ff;
-    --muted: #6b7591;
-    --gold: #f5c542;
-    --gold-dim: rgba(245,197,66,0.10);
+    --black:#050608; --surface:#0d0f14; --card:#12151c;
+    --border:#1e2330; --cyan:#00e5ff; --cyan-dim:rgba(0,229,255,0.12);
+    --cyan-glow:rgba(0,229,255,0.35); --white:#f0f4ff; --muted:#6b7591;
+    --gold:#f5c542; --gold-dim:rgba(245,197,66,0.10);
   }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,229,255,0.07) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 90% 90%,rgba(245,197,66,0.05) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .grid-overlay{position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* GATE */
+  .gate{position:fixed;inset:0;background:var(--black);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;transition:opacity 0.6s ease,transform 0.6s ease;overflow-y:auto;}
+  .gate.hide{opacity:0;pointer-events:none;transform:scale(1.04);}
+  .gate-logo{height:50px;width:auto;margin-bottom:20px;}
+  .gate-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--white);text-align:center;line-height:1.1;}
+  .gate-title span{color:var(--gold);}
+  .gate-subtitle{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);text-align:center;margin-top:10px;letter-spacing:0.8px;line-height:1.7;max-width:300px;}
+  .gate-divider{width:36px;height:1px;background:var(--gold);margin:18px auto;opacity:0.35;}
+  .gate-form{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;}
+  .gate-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--white);outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+  .gate-input::placeholder{color:var(--muted);}
+  .gate-input:focus{border-color:var(--gold);}
+  .gate-btn{width:100%;background:var(--gold);color:var(--black);border:none;border-radius:10px;padding:16px;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 0 28px rgba(245,197,66,0.30);transition:box-shadow 0.2s,transform 0.15s;margin-top:4px;letter-spacing:0.5px;}
+  .gate-btn:active{transform:scale(0.97);}
+  .gate-skip{margin-top:14px;font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;cursor:pointer;text-align:center;letter-spacing:0.5px;text-decoration:underline;text-underline-offset:3px;}
+  .gate-skip:hover{color:var(--white);}
+  .gate-note{margin-top:12px;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;text-align:center;opacity:0.5;}
+  .gate-error{font-size:11px;color:#ff3c6e;font-family:'Space Mono',monospace;text-align:center;display:none;margin-top:2px;}
 
-  html, body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,229,255,0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 90% 90%, rgba(245,197,66,0.05) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .grid-overlay {
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .wrapper {
-    position: relative;
-    z-index: 1;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0 0 60px 0;
-  }
-
-  /* ── LOGO BAR ── */
-  .logo-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 28px 0;
-    animation: fadeDown 0.5s ease both;
-  }
-
-  .logo-bar img {
-    height: 48px;
-    width: auto;
-    object-fit: contain;
-  }
-
-  .logo-bar-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-
-  .logo-company-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 3px;
-    color: var(--cyan);
-    line-height: 1;
-  }
-
-  .logo-company-url {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    margin-top: 3px;
-    text-decoration: none;
-  }
-
-  .logo-company-url:hover { color: var(--cyan); }
-
-  /* ── ADVISOR BADGE ── */
-  .advisor-badge {
-    margin: 20px 28px 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--gold-dim);
-    border: 1px solid rgba(245,197,66,0.30);
-    border-radius: 100px;
-    padding: 6px 14px;
-    animation: fadeDown 0.55s ease both;
-  }
-
-  .advisor-badge-dot {
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  .advisor-badge-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--gold);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-
-  /* ── HERO ── */
-  .hero {
-    padding: 20px 28px 36px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::after {
-    content: 'PITHONIX';
-    position: absolute;
-    bottom: -8px;
-    right: -12px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 96px;
-    color: rgba(0,229,255,0.04);
-    letter-spacing: 4px;
-    pointer-events: none;
-    line-height: 1;
-  }
-
-  .name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(48px, 13vw, 68px);
-    line-height: 0.9;
-    letter-spacing: 2px;
-    color: var(--white);
-    animation: fadeDown 0.7s 0.1s ease both;
-  }
-
-  .name .highlight { color: var(--gold); }
-
-  .designation {
-    margin-top: 14px;
-    font-size: 13px;
-    font-weight: 300;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-    line-height: 1.6;
-    animation: fadeDown 0.7s 0.2s ease both;
-  }
-
-  .designation strong { color: var(--white); font-weight: 500; }
-
-  /* ── ADVISOR STRIPE ── */
-  .advisor-stripe {
-    margin: 0 28px;
-    padding: 14px 18px;
-    background: var(--gold-dim);
-    border: 1px solid rgba(245,197,66,0.18);
-    border-left: 3px solid var(--gold);
-    border-radius: 10px;
-    animation: fadeUp 0.7s 0.25s ease both;
-  }
-
-  .advisor-stripe-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--gold);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-  }
-
-  .advisor-stripe-text {
-    font-size: 13px;
-    color: rgba(240,244,255,0.70);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  /* ── STATS ── */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    margin-top: 24px;
-    animation: fadeUp 0.8s 0.3s ease both;
-  }
-
-  .stat {
-    background: var(--surface);
-    padding: 18px 12px;
-    text-align: center;
-  }
-
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    color: var(--cyan);
-    line-height: 1;
-  }
-
-  .stat-label {
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    margin-top: 4px;
-    font-family: 'Space Mono', monospace;
-  }
-
-  /* ── SECTION ── */
-  .section {
-    padding: 28px 28px 0;
-    animation: fadeUp 0.8s 0.4s ease both;
-  }
-
-  .section-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--cyan);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .about-text {
-    font-size: 14px;
-    line-height: 1.75;
-    color: rgba(240,244,255,0.75);
-    font-weight: 300;
-  }
-
-  .about-text strong { color: var(--white); font-weight: 500; }
-
-  /* ── FRAMEWORK CARD ── */
-  .framework-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--cyan);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-top: 16px;
-  }
-
-  .fw-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: var(--cyan);
-    letter-spacing: 2px;
-  }
-
-  .fw-subtitle {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 3px;
-    font-family: 'Space Mono', monospace;
-  }
-
-  .fw-pillars {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 14px;
-  }
-
-  .pillar {
-    background: rgba(0,229,255,0.05);
-    border: 1px solid rgba(0,229,255,0.12);
-    border-radius: 8px;
-    padding: 10px 12px;
-  }
-
-  .pillar-icon { font-size: 16px; margin-bottom: 4px; }
-  .pillar-name { font-size: 11px; color: var(--white); font-weight: 500; }
-  .pillar-desc { font-size: 10px; color: var(--muted); margin-top: 2px; }
-
-  /* ── CTA BUTTONS ── */
-  .cta-stack {
-    padding: 28px 28px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    animation: fadeUp 0.8s 0.5s ease both;
-  }
-
-  .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 16px 24px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    border: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    letter-spacing: 0.3px;
-  }
-
-  .btn:active { transform: scale(0.97); }
-
-  .btn-primary {
-    background: var(--gold);
-    color: var(--black);
-    font-weight: 700;
-    box-shadow: 0 0 30px rgba(245,197,66,0.30), 0 4px 16px rgba(0,0,0,0.4);
-  }
-
-  .btn-primary:hover { box-shadow: 0 0 50px rgba(245,197,66,0.45), 0 4px 24px rgba(0,0,0,0.5); }
-
-  .btn-whatsapp {
-    background: #075E54;
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(7,94,84,0.4);
-  }
-
-  .btn-whatsapp:hover { background: #128C7E; }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--white);
-    border: 1px solid var(--border);
-  }
-
-  .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
-  .btn-icon { font-size: 18px; flex-shrink: 0; }
-
-  /* ── CONTACT ── */
-  .contact-row {
-    padding: 24px 28px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    animation: fadeUp 0.8s 0.55s ease both;
-  }
-
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    text-decoration: none;
-    transition: border-color 0.2s;
-  }
-
-  .contact-item:hover { border-color: var(--gold); }
-
-  .contact-icon {
-    width: 36px; height: 36px;
-    background: var(--gold-dim);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-
-  .contact-label { font-size: 10px; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: 0.5px; }
-  .contact-value { font-size: 13px; color: var(--white); font-weight: 500; margin-top: 1px; }
-
-  /* ── FOOTER ── */
-  .footer {
-    margin: 36px 28px 0;
-    padding: 20px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    animation: fadeUp 0.8s 0.6s ease both;
-  }
-
-  .footer img { height: 36px; width: auto; }
-
-  .footer-text { text-align: left; }
-
-  .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 3px;
-    color: var(--cyan);
-    line-height: 1;
-  }
-
-  .footer-tagline {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 3px;
-    font-family: 'Space Mono', monospace;
-  }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--gold);
-    color: var(--black);
-    padding: 12px 20px;
-    border-radius: 100px;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-    z-index: 100;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
-  }
-
-  .scan-line {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    z-index: 999;
-    animation: scan 1.2s ease-out forwards;
-  }
-  @keyframes scan {
-    from { top: 0; opacity: 1; }
-    to   { top: 100vh; opacity: 0; }
-  }
+  /* CARD */
+  .wrapper{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 0 60px 0;}
+  .logo-bar{display:flex;align-items:center;justify-content:space-between;padding:20px 28px 0;animation:fadeDown 0.5s ease both;}
+  .logo-bar img{height:48px;width:auto;object-fit:contain;}
+  .logo-bar-right{display:flex;flex-direction:column;align-items:flex-end;}
+  .logo-company-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--cyan);line-height:1;}
+  .logo-company-url{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px;text-decoration:none;}
+  .logo-company-url:hover{color:var(--cyan);}
+  .advisor-badge{margin:20px 28px 0;display:inline-flex;align-items:center;gap:8px;background:var(--gold-dim);border:1px solid rgba(245,197,66,0.30);border-radius:100px;padding:6px 14px;animation:fadeDown 0.55s ease both;}
+  .advisor-badge-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;}
+  .advisor-badge-text{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;}
+  .hero{padding:20px 28px 36px;position:relative;overflow:hidden;}
+  .hero::after{content:'PITHONIX';position:absolute;bottom:-8px;right:-12px;font-family:'Bebas Neue',sans-serif;font-size:96px;color:rgba(0,229,255,0.04);letter-spacing:4px;pointer-events:none;line-height:1;}
+  .name{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,13vw,68px);line-height:0.9;letter-spacing:2px;color:var(--white);animation:fadeDown 0.7s 0.1s ease both;}
+  .name .highlight{color:var(--gold);}
+  .designation{margin-top:14px;font-size:13px;font-weight:300;color:var(--muted);letter-spacing:0.5px;line-height:1.6;animation:fadeDown 0.7s 0.2s ease both;}
+  .designation strong{color:var(--white);font-weight:500;}
+  .advisor-stripe{margin:0 28px;padding:14px 18px;background:var(--gold-dim);border:1px solid rgba(245,197,66,0.18);border-left:3px solid var(--gold);border-radius:10px;animation:fadeUp 0.7s 0.25s ease both;}
+  .advisor-stripe-title{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+  .advisor-stripe-text{font-size:13px;color:rgba(240,244,255,0.70);line-height:1.6;font-weight:300;}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:24px;animation:fadeUp 0.8s 0.3s ease both;}
+  .stat{background:var(--surface);padding:18px 12px;text-align:center;}
+  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--cyan);line-height:1;}
+  .stat-label{font-size:9px;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-top:4px;font-family:'Space Mono',monospace;}
+  .section{padding:28px 28px 0;animation:fadeUp 0.8s 0.4s ease both;}
+  .section-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .about-text{font-size:14px;line-height:1.75;color:rgba(240,244,255,0.75);font-weight:300;}
+  .about-text strong{color:var(--white);font-weight:500;}
+  .framework-card{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:12px;padding:18px 20px;margin-top:16px;}
+  .fw-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--cyan);letter-spacing:2px;}
+  .fw-subtitle{font-size:11px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace;}
+  .fw-pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;}
+  .pillar{background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.12);border-radius:8px;padding:10px 12px;}
+  .pillar-icon{font-size:16px;margin-bottom:4px;}
+  .pillar-name{font-size:11px;color:var(--white);font-weight:500;}
+  .pillar-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+  .cta-stack{padding:28px 28px 0;display:flex;flex-direction:column;gap:12px;animation:fadeUp 0.8s 0.5s ease both;}
+  .btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 24px;border-radius:12px;font-size:14px;font-weight:500;text-decoration:none;cursor:pointer;border:none;transition:transform 0.15s ease,box-shadow 0.15s ease;letter-spacing:0.3px;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--gold);color:var(--black);font-weight:700;box-shadow:0 0 30px rgba(245,197,66,0.30),0 4px 16px rgba(0,0,0,0.4);}
+  .btn-whatsapp{background:#075E54;color:#fff;box-shadow:0 4px 16px rgba(7,94,84,0.4);}
+  .btn-whatsapp:hover{background:#128C7E;}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid var(--border);}
+  .btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+  .btn-icon{font-size:18px;flex-shrink:0;}
+  .contact-row{padding:24px 28px 0;display:flex;flex-direction:column;gap:10px;animation:fadeUp 0.8s 0.55s ease both;}
+  .contact-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;text-decoration:none;transition:border-color 0.2s;}
+  .contact-item:hover{border-color:var(--gold);}
+  .contact-icon{width:36px;height:36px;background:var(--gold-dim);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .contact-label{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:0.5px;}
+  .contact-value{font-size:13px;color:var(--white);font-weight:500;margin-top:1px;}
+  .footer{margin:36px 28px 0;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:14px;animation:fadeUp 0.8s 0.6s ease both;}
+  .footer img{height:36px;width:auto;}
+  .footer-text{text-align:left;}
+  .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--cyan);line-height:1;}
+  .footer-tagline{font-size:10px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gold);color:var(--black);padding:12px 20px;border-radius:100px;font-size:13px;font-weight:700;white-space:nowrap;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);z-index:100;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:999;animation:scan 1.2s ease-out forwards;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  @keyframes scan{from{top:0;opacity:1}to{top:100vh;opacity:0}}
 </style>
 </head>
 <body>
+
+<!-- LEAD GATE -->
+<div class="gate" id="gate">
+  <img src="logo.png" alt="Pithonix" class="gate-logo">
+  <div class="gate-title">BEFORE WE CONNECT<br><span>TELL US WHO YOU ARE</span></div>
+  <div class="gate-subtitle">You're about to access Arun Kumar Sahu's digital profile. Share your details and we'll connect personally.</div>
+  <div class="gate-divider"></div>
+  <div class="gate-form">
+    <input class="gate-input" id="lead-name" type="text" placeholder="Your Full Name *" autocomplete="name">
+    <input class="gate-input" id="lead-phone" type="tel" placeholder="Your Mobile Number *" autocomplete="tel">
+    <input class="gate-input" id="lead-email" type="email" placeholder="Your Email (optional)" autocomplete="email">
+    <input class="gate-input" id="lead-org" type="text" placeholder="Your Organisation (optional)">
+    <div class="gate-error" id="gate-error">⚠ Name and mobile are required to continue.</div>
+    <button class="gate-btn" onclick="submitLead()">🚀 View Profile & Connect</button>
+  </div>
+  <div class="gate-skip" onclick="skipGate()">Skip for now</div>
+  <div class="gate-note">🔒 Details shared only with Pithonix.ai team</div>
+</div>
 
 <div class="scan-line"></div>
 <div class="grid-overlay"></div>
 <div class="toast" id="toast">✓ Contact saved!</div>
 
 <div class="wrapper">
-
-  <!-- LOGO BAR -->
   <div class="logo-bar">
     <img src="logo.png" alt="Pithonix Logo">
     <div class="logo-bar-right">
@@ -494,18 +137,13 @@
     </div>
   </div>
 
-  <!-- ADVISOR BADGE -->
   <div class="advisor-badge">
     <div class="advisor-badge-dot"></div>
     <span class="advisor-badge-text">Strategic Advisor · Pithonix.ai</span>
   </div>
 
-  <!-- HERO -->
   <div class="hero">
-    <div class="name">
-      ARUN KUMAR<br>
-      <span class="highlight">SAHU</span>
-    </div>
+    <div class="name">ARUN KUMAR<br><span class="highlight">SAHU</span></div>
     <div class="designation">
       <strong>Advisor · Pithonix.ai</strong><br>
       Enterprise AI Strategy & Growth<br>
@@ -513,122 +151,49 @@
     </div>
   </div>
 
-  <!-- ADVISOR STRIPE -->
   <div class="advisor-stripe">
     <div class="advisor-stripe-title">Advisory Role</div>
-    <div class="advisor-stripe-text">
-      Guiding Pithonix.ai's strategic direction — bringing deep enterprise expertise
-      to help organisations navigate the AI transformation journey with clarity and confidence.
-    </div>
+    <div class="advisor-stripe-text">Guiding Pithonix.ai's strategic direction — bringing deep enterprise expertise to help organisations navigate the AI transformation journey with clarity and confidence.</div>
   </div>
 
-  <!-- STATS -->
   <div class="stats">
-    <div class="stat">
-      <div class="stat-num">24</div>
-      <div class="stat-label">AI Agents</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">20+</div>
-      <div class="stat-label">MCP Connectors</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">∞</div>
-      <div class="stat-label">ROI Potential</div>
-    </div>
+    <div class="stat"><div class="stat-num">24</div><div class="stat-label">AI Agents</div></div>
+    <div class="stat"><div class="stat-num">20+</div><div class="stat-label">MCP Connectors</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">ROI Potential</div></div>
   </div>
 
-  <!-- ABOUT -->
   <div class="section">
     <div class="section-label">About Pithonix.ai</div>
-    <p class="about-text">
-      Pithonix.ai is building the <strong>AI nervous system for enterprises</strong> —
-      a living intelligence layer that replaces guesswork with
-      <strong>Competency Velocity</strong>, <strong>Operational Resilience</strong>,
-      and <strong>Tangible ROI</strong>. As an Advisor, I help enterprises
-      unlock this potential and move from <strong>AI curiosity to AI advantage</strong>.
-    </p>
-
+    <p class="about-text">Pithonix.ai is building the <strong>AI nervous system for enterprises</strong> — a living intelligence layer that replaces guesswork with <strong>Competency Velocity</strong>, <strong>Operational Resilience</strong>, and <strong>Tangible ROI</strong>. As an Advisor, I help enterprises unlock this potential and move from <strong>AI curiosity to AI advantage</strong>.</p>
     <div class="framework-card">
       <div class="fw-title">JEET FRAMEWORK</div>
       <div class="fw-subtitle">Just-in-Time · Emotionally Empowered Technology</div>
       <div class="fw-pillars">
-        <div class="pillar">
-          <div class="pillar-icon">⚡</div>
-          <div class="pillar-name">Just-in-Time</div>
-          <div class="pillar-desc">Right intelligence, right moment</div>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon">🧠</div>
-          <div class="pillar-name">AI-Native</div>
-          <div class="pillar-desc">24 agents, zero latency</div>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon">🏥</div>
-          <div class="pillar-name">HARI Platform</div>
-          <div class="pillar-desc">Healthcare AI, Epic/Cerner ready</div>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon">📈</div>
-          <div class="pillar-name">Exit Impact</div>
-          <div class="pillar-desc">Measurable, audit-proof ROI</div>
-        </div>
+        <div class="pillar"><div class="pillar-icon">⚡</div><div class="pillar-name">Just-in-Time</div><div class="pillar-desc">Right intelligence, right moment</div></div>
+        <div class="pillar"><div class="pillar-icon">🧠</div><div class="pillar-name">AI-Native</div><div class="pillar-desc">24 agents, zero latency</div></div>
+        <div class="pillar"><div class="pillar-icon">🏥</div><div class="pillar-name">HARI Platform</div><div class="pillar-desc">Healthcare AI, Epic/Cerner ready</div></div>
+        <div class="pillar"><div class="pillar-icon">📈</div><div class="pillar-name">Exit Impact</div><div class="pillar-desc">Measurable, audit-proof ROI</div></div>
       </div>
     </div>
   </div>
 
-  <!-- CTA BUTTONS -->
   <div class="cta-stack">
-    <button class="btn btn-primary" onclick="saveContact()">
-      <span class="btn-icon">👤</span>
-      Save to Contacts
-    </button>
+    <button class="btn btn-primary" onclick="saveContact()"><span class="btn-icon">👤</span>Save to Contacts</button>
     <a class="btn btn-whatsapp" href="https://wa.me/918008926152?text=Hi%20Arun!%20I%20just%20scanned%20your%20card%20at%20the%20conclave.%20Would%20love%20to%20connect%20on%20Pithonix.ai." target="_blank">
-      <span class="btn-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-      </span>
+      <span class="btn-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></span>
       Connect on WhatsApp
     </a>
-    <a class="btn btn-outline" href="https://pithonix.ai" target="_blank">
-      <span class="btn-icon">🌐</span>
-      Visit Pithonix.ai
-    </a>
+    <a class="btn btn-outline" href="https://pithonix.ai" target="_blank"><span class="btn-icon">🌐</span>Visit Pithonix.ai</a>
   </div>
 
-  <!-- CONTACT DETAILS -->
   <div class="contact-row">
-    <div class="section-label" style="padding: 0; margin-top: 8px;">Contact</div>
-    <a class="contact-item" href="tel:+918008926152">
-      <div class="contact-icon">📞</div>
-      <div>
-        <div class="contact-label">Mobile</div>
-        <div class="contact-value">+91 80089 26152</div>
-      </div>
-    </a>
-    <a class="contact-item" href="https://pithonix.ai" target="_blank">
-      <div class="contact-icon">🌐</div>
-      <div>
-        <div class="contact-label">Company</div>
-        <div class="contact-value">pithonix.ai</div>
-      </div>
-    </a>
-    <a class="contact-item" href="https://www.linkedin.com/in/arun-kumar-sahu-14aba059" target="_blank">
-      <div class="contact-icon">💼</div>
-      <div>
-        <div class="contact-label">LinkedIn</div>
-        <div class="contact-value">linkedin.com/in/arun-kumar-sahu</div>
-      </div>
-    </a>
-    <a class="contact-item" href="https://hari.pithonix.ai" target="_blank">
-      <div class="contact-icon">🏥</div>
-      <div>
-        <div class="contact-label">HARI Platform</div>
-        <div class="contact-value">hari.pithonix.ai</div>
-      </div>
-    </a>
+    <div class="section-label" style="padding:0;margin-top:8px;">Contact</div>
+    <a class="contact-item" href="tel:+918008926152"><div class="contact-icon">📞</div><div><div class="contact-label">Mobile</div><div class="contact-value">+91 80089 26152</div></div></a>
+    <a class="contact-item" href="https://pithonix.ai" target="_blank"><div class="contact-icon">🌐</div><div><div class="contact-label">Company</div><div class="contact-value">pithonix.ai</div></div></a>
+    <a class="contact-item" href="https://www.linkedin.com/in/arun-kumar-sahu-14aba059" target="_blank"><div class="contact-icon">💼</div><div><div class="contact-label">LinkedIn</div><div class="contact-value">linkedin.com/in/arun-kumar-sahu</div></div></a>
+    <a class="contact-item" href="https://hari.pithonix.ai" target="_blank"><div class="contact-icon">🏥</div><div><div class="contact-label">HARI Platform</div><div class="contact-value">hari.pithonix.ai</div></div></a>
   </div>
 
-  <!-- FOOTER -->
   <div class="footer">
     <img src="logo.png" alt="Pithonix">
     <div class="footer-text">
@@ -636,47 +201,56 @@
       <div class="footer-tagline">The Enterprise AI Operating System</div>
     </div>
   </div>
-
 </div>
 
 <script>
-  function saveContact() {
-    const vcard = `BEGIN:VCARD
-VERSION:3.0
-N:Sahu;Arun Kumar;;;
-FN:Arun Kumar Sahu
-ORG:Pithonix.ai
-TITLE:Advisor
-TEL;TYPE=CELL:+918008926152
-URL:https://pithonix.ai
-item1.URL:https://www.linkedin.com/in/arun-kumar-sahu-14aba059
-item1.X-ABLabel:LinkedIn
-ADR;TYPE=WORK:;;Hyderabad;Telangana;;India
-NOTE:Strategic Advisor at Pithonix.ai — Enterprise AI Platform powered by the JEET Framework (Just-in-Time\\, Emotionally Empowered Technology).
-END:VCARD`;
+  const YOUR_WA = '919903089000';
+  const FORMSPREE_ID = 'mvzwkqyl';
 
-    const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = 'Arun_Kumar_Sahu_Pithonix.vcf';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('✓ Contact file downloaded — open to save!');
+  function submitLead() {
+    const name  = document.getElementById('lead-name').value.trim();
+    const phone = document.getElementById('lead-phone').value.trim();
+    const email = document.getElementById('lead-email').value.trim();
+    const org   = document.getElementById('lead-org').value.trim();
+    const err   = document.getElementById('gate-error');
+    if (!name || !phone) { err.style.display='block'; return; }
+    err.style.display = 'none';
+
+    fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, phone, email:email||'Not provided', organisation:org||'Not provided', card:'Arun Kumar Sahu — card.pithonix.ai/arun.html', time:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) })
+    }).catch(()=>{});
+
+    const msg = encodeURIComponent(`🔔 NEW LEAD — Arun's Card Scan\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
+    window.open(`https://wa.me/${YOUR_WA}?text=${msg}`,'_blank');
+
+    unlockCard();
+    showToast(`Welcome ${name.split(' ')[0]}! Opening profile...`);
+  }
+
+  function skipGate() { unlockCard(); }
+
+  function unlockCard() {
+    document.getElementById('gate').classList.add('hide');
+    setTimeout(()=>document.getElementById('gate').style.display='none',600);
+  }
+
+  function saveContact() {
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nN:Sahu;Arun Kumar;;;\nFN:Arun Kumar Sahu\nORG:Pithonix.ai\nTITLE:Advisor\nTEL;TYPE=CELL:+918008926152\nURL:https://pithonix.ai\nADR;TYPE=WORK:;;Hyderabad;Telangana;;India\nNOTE:Strategic Advisor at Pithonix.ai — Enterprise AI Platform powered by the JEET Framework.\nEND:VCARD`;
+    const blob = new Blob([vcard],{type:'text/vcard;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='Arun_Kumar_Sahu_Pithonix.vcf';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('✓ Contact downloaded — open to save!');
   }
 
   function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3200);
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3200);
   }
-
-  window.addEventListener('load', () => {
-    setTimeout(() => showToast('👆 Tap "Save to Contacts" to add Arun!'), 1800);
-  });
 </script>
 </body>
 </html>
