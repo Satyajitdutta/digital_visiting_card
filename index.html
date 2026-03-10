@@ -104,7 +104,7 @@
 <!-- LEAD GATE -->
 <div class="gate" id="gate">
   <img src="logo.png" alt="Pithonix" class="gate-logo">
-  <div class="gate-title">BEFORE WE CONNECT<br><span>TELL US WHO YOU ARE</span></div>
+  <div class="gate-title">START WITH AN INTRODUCTION<br><span>Every great connection begins with one</span></div>
   <div class="gate-subtitle">You're about to access Satyajit Dutta's digital profile. Share your details and we'll connect personally.</div>
   <div class="gate-divider"></div>
   <div class="gate-form">
@@ -175,7 +175,7 @@
   <div class="contact-row">
     <div class="section-label" style="padding:0;margin-top:8px;">Contact</div>
     <a class="contact-item" href="tel:+919903089000"><div class="contact-icon">📞</div><div><div class="contact-label">Mobile</div><div class="contact-value">+91 99030 89000</div></div></a>
-    <a class="contact-item" href="mailto:satyajit.d@pithonix.ai"><div class="contact-icon">✉️</div><div><div class="contact-label">Email</div><div class="contact-value">satyajit.d@pithonix.ai</div></div></a>
+    <a class="contact-item" href="/cdn-cgi/l/email-protection#146775606d757e7d603a7054647d607c7b7a7d6c3a757d"><div class="contact-icon">✉️</div><div><div class="contact-label">Email</div><div class="contact-value"><span class="__cf_email__" data-cfemail="3a495b4e435b50534e145e7a4a534e5255545342145b53">[email&#160;protected]</span></div></div></a>
     <a class="contact-item" href="https://www.linkedin.com/in/satyajit-digitalhr/" target="_blank"><div class="contact-icon">💼</div><div><div class="contact-label">LinkedIn</div><div class="contact-value">linkedin.com/in/satyajit-digitalhr</div></div></a>
     <a class="contact-item" href="https://hari.pithonix.ai" target="_blank"><div class="contact-icon">🏥</div><div><div class="contact-label">HARI Platform</div><div class="contact-value">hari.pithonix.ai</div></div></a>
   </div>
@@ -189,9 +189,9 @@
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const YOUR_WA = '919903089000';
-  const FORMSPREE_ID = 'mvzwkqyl'; // Replace with your Formspree form ID
+  const FORMSPREE_ID = 'YOUR_FORM_ID'; // Replace with your Formspree form ID
 
   function submitLead() {
     const name  = document.getElementById('lead-name').value.trim();
@@ -203,7 +203,7 @@
     err.style.display = 'none';
 
     // Send to Formspree inbox
-    if (FORMSPREE_ID !== 'mvzwkqyl') {
+    if (FORMSPREE_ID !== 'YOUR_FORM_ID') {
       fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ name, phone, email: email||'Not provided', organisation: org||'Not provided', card:'Satyajit Dutta — card.pithonix.ai', time: new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) })
@@ -233,14 +233,4 @@
     a.href=url; a.download='Satyajit_Dutta_Pithonix.vcf';
     document.body.appendChild(a); a.click();
     document.body.removeChild(a); URL.revokeObjectURL(url);
-    showToast('✓ Contact downloaded — open to save!');
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent=msg; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),3200);
-  }
-</script>
-</body>
-</html>
+    showToast('✓ Con
