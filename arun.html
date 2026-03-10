@@ -221,11 +221,13 @@
       body: JSON.stringify({ name, phone, email:email||'Not provided', organisation:org||'Not provided', card:'Arun Kumar Sahu — card.pithonix.ai/arun.html', time:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) })
     }).catch(()=>{});
 
-    const msg = encodeURIComponent(`🔔 NEW LEAD — Arun's Card Scan\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
-    window.open(`https://wa.me/${YOUR_WA}?text=${msg}`,'_blank');
-
     unlockCard();
-    showToast(`Welcome ${name.split(' ')[0]}! Opening profile...`);
+    showToast(`Welcome ${name.split(' ')[0]}! Great to connect!`);
+
+    setTimeout(() => {
+      const msg = encodeURIComponent(`🔔 NEW LEAD — Arun's Card\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
+      window.open(`https://wa.me/${YOUR_WA}?text=${msg}`, '_blank');
+    }, 1500);
   }
 
   function skipGate() { unlockCard(); }
