@@ -202,10 +202,20 @@
     if (!name || !phone) { err.style.display='block'; return; }
     err.style.display = 'none';
 
+    // 1. Fire WhatsApp IMMEDIATELY
+    const msg = encodeURIComponent(`🔔 NEW LEAD — Amit Soni's Card Scan\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
+    window.open(`https://wa.me/${YOUR_WA}?text=${msg}`,'_blank');
+
+    // 2. Unlock card
+    unlockCard();
+    showToast(`Welcome ${name.split(' ')[0]}! Opening profile...`);
+
+    // 3. Background fetch
     fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ name, phone, email:email||'Not provided', organisation:org||'Not provided', card:'Amit Soni — card.pithonix.ai/amit.html', time:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) })
     }).catch(()=>{});
+  }
 
     unlockCard();
     showToast(`Welcome ${name.split(' ')[0]}! Great to connect!`);
