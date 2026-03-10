@@ -210,12 +210,15 @@
       }).catch(()=>{});
     }
 
-    // WhatsApp ping to Satyajit instantly
-    const msg = encodeURIComponent(`🔔 NEW LEAD — Pithonix Card Scan\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
-    window.open(`https://wa.me/${YOUR_WA}?text=${msg}`, '_blank');
-
+    // Unlock card immediately — don't let anything block this
     unlockCard();
-    showToast(`Welcome ${name.split(' ')[0]}! Opening profile...`);
+    showToast(`Welcome ${name.split(' ')[0]}! Great to connect!`);
+
+    // WhatsApp ping fires after card is open — won't block the experience
+    setTimeout(() => {
+      const msg = encodeURIComponent(`🔔 NEW LEAD — Satyajit's Card\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n✉️ Email: ${email||'Not shared'}\n🏢 Org: ${org||'Not shared'}\n🕐 ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}`);
+      window.open(`https://wa.me/${YOUR_WA}?text=${msg}`, '_blank');
+    }, 1500);
   }
 
   function skipGate() { unlockCard(); }
