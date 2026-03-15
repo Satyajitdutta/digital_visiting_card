@@ -158,21 +158,44 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 
 <script>
+var MAKE_WEBHOOK = 'https://hook.eu1.make.com/odvi6k6vnyu839ha3hu2pc5utpalcesj';
+var FORMSPREE    = 'https://formspree.io/f/mvzwkqyl';
+
 document.getElementById('g-btn').addEventListener('click', function() {
   var name  = document.getElementById('g-name').value.trim();
   var phone = document.getElementById('g-phone').value.trim();
   var email = document.getElementById('g-email').value.trim();
   var org   = document.getElementById('g-org').value.trim();
+
   if (!name || !phone) {
     document.getElementById('g-err').style.display = 'block';
     return;
   }
+
   document.getElementById('gate').style.display = 'none';
   showToast('Welcome ' + name.split(' ')[0] + '! Great to connect!');
-  fetch('https://formspree.io/f/mvzwkqyl', {
+
+  var payload = JSON.stringify({
+    name: name,
+    phone: phone,
+    email: email || 'Not provided',
+    organisation: org || 'Not provided',
+    card: 'Satyajit Dutta — card.pithonix.ai',
+    time: new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})
+  });
+
+  // PRIMARY — Make.com triggers the full email automation
+  fetch(MAKE_WEBHOOK, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({name:name, phone:phone, email:email||'Not provided', organisation:org||'Not provided', card:'Satyajit Dutta — card.pithonix.ai', time:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})})
+    body: payload
+  }).catch(function(){});
+
+  // BACKUP — Formspree emails you the lead directly (free tier)
+  fetch(FORMSPREE, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: payload
   }).catch(function(){});
 });
 
@@ -189,10 +212,10 @@ function showToast(msg) {
 
 function saveContact() {
   var v = 'BEGIN:VCARD\nVERSION:3.0\nN:Dutta;Satyajit;;;\nFN:Satyajit Dutta\nORG:Pithonix.ai\nTITLE:Founder & CEO\nTEL;TYPE=CELL:+919903089000\nEMAIL:satyajit.d@pithonix.ai\nURL:https://pithonix.ai\nADR;TYPE=WORK:;;Hyderabad;Telangana;;India\nNOTE:Founder of Pithonix.ai — JEET Framework Creator.\nEND:VCARD';
-  var b = new Blob([v],{type:'text/vcard'});
+  var b = new Blob([v], {type: 'text/vcard'});
   var u = URL.createObjectURL(b);
   var a = document.createElement('a');
-  a.href=u; a.download='Satyajit_Dutta_Pithonix.vcf';
+  a.href = u; a.download = 'Satyajit_Dutta_Pithonix.vcf';
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(u);
   showToast('Contact downloaded — open to save!');
