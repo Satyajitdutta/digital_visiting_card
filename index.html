@@ -209,8 +209,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <div class="contact-row">
     <div class="sec-label" style="margin-top:8px;">Contact</div>
-    <a class="contact-item" href="tel:+919903089000"><div class="contact-icon">&#128222;</div><div><div class="contact-label">Mobile</div><div class="contact-value">+91 99030 89000</div></div></a>
-    <a class="contact-item" href="mailto:satyajit.d@pithonix.ai"><div class="contact-icon">&#9993;</div><div><div class="contact-label">Email</div><div class="contact-value">satyajit.d@pithonix.ai</div></div></a>
+    <a class="contact-item" href="tel:+919652640505"><div class="contact-icon">&#128222;</div><div><div class="contact-label">Business Mobile</div><div class="contact-value">+91 96526 40505</div></div></a>
+    <a class="contact-item" href="mailto:satyajitv.d@pithonix.ai"><div class="contact-icon">&#9993;</div><div><div class="contact-label">Email</div><div class="contact-value">satyajitv.d@pithonix.ai</div></div></a>
     <a class="contact-item" href="https://www.linkedin.com/in/satyajit-digitalhr" target="_blank"><div class="contact-icon">&#128188;</div><div><div class="contact-label">LinkedIn</div><div class="contact-value">linkedin.com/in/satyajit-digitalhr</div></div></a>
     <a class="contact-item" href="https://gcc-playbook.pithonix.ai" target="_blank"><div class="contact-icon">&#127970;</div><div><div class="contact-label">AI GCC Simulator</div><div class="contact-value">gcc-playbook.pithonix.ai</div></div></a>
   </div>
@@ -276,7 +276,7 @@ function showToast(msg) {
 }
 
 function saveContact() {
-  var v = 'BEGIN:VCARD\nVERSION:3.0\nN:Dutta;Satyajit;;;\nFN:Satyajit Dutta\nORG:Pithonix.ai\nTITLE:Founder & CEO\nTEL;TYPE=CELL:+919903089000\nEMAIL:satyajit.d@pithonix.ai\nURL:https://gcc-playbook.pithonix.ai\nADR;TYPE=WORK:;;Hyderabad;Telangana;;India\nNOTE:Founder of Pithonix.ai. India GCC Intelligence Platform. AI GCC Simulator: gcc-playbook.pithonix.ai\nEND:VCARD';
+  var v = 'BEGIN:VCARD\nVERSION:3.0\nN:Dutta;Satyajit;;;\nFN:Satyajit Dutta\nORG:Pithonix.ai\nTITLE:Founder & CEO\nTEL;TYPE=WORK,CELL:+919652640505\nTEL;TYPE=CELL:+919903089000\nEMAIL:satyajitv.d@pithonix.ai\nURL:https://gcc-playbook.pithonix.ai\nADR;TYPE=WORK:;;Hyderabad;Telangana;;India\nNOTE:Founder of Pithonix.ai. India GCC Intelligence Platform. AI GCC Simulator: gcc-playbook.pithonix.ai\nEND:VCARD';
   var b = new Blob([v], {type: 'text/vcard'});
   var u = URL.createObjectURL(b);
   var a = document.createElement('a');
