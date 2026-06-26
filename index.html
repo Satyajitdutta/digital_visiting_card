@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Satyajit Dutta | Pithonix.ai</title>
+<title>Satyajit v Dutta | Pithonix.ai</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -140,7 +140,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button id="g-btn">&#128640; View Profile &amp; Connect</button>
   </div>
   <div class="g-skip" id="g-skip">Skip for now</div>
-  <div class="g-note">&#128274; Details shared only with Satyajit Dutta &middot; Pithonix.ai</div>
+  <div class="g-note">&#128274; Details shared only with Satyajit v Dutta &middot; Pithonix.ai</div>
 </div>
 
 <div class="scan-line"></div>
@@ -157,7 +157,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <div class="hero">
     <div class="tag-pill"><span></span> GCC Ecosystem Partner &middot; Pithonix.ai</div>
-    <div class="name">SATYAJIT<br><span class="hl">DUTTA</span></div>
+    <div class="name">SATYAJIT V<br><span class="hl">DUTTA</span></div>
     <div class="desig"><strong>Founder &amp; CEO &middot; Pithonix.ai</strong><br>Building India's GCC Ecosystem, Together<br>Hyderabad, India</div>
   </div>
 
@@ -226,8 +226,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 
 <script>
-var MAKE_WEBHOOK = 'https://hook.eu1.make.com/odvi6k6vnyu839ha3hu2pc5utpalcesj';
-var FORMSPREE    = 'https://formspree.io/f/mvzwkqyl';
+var LEAD_API = 'https://card-api-lemon.vercel.app/api/lead';
 
 document.getElementById('g-btn').addEventListener('click', function() {
   var name  = document.getElementById('g-name').value.trim();
@@ -246,33 +245,24 @@ document.getElementById('g-btn').addEventListener('click', function() {
 
   // Build personalised WhatsApp message
   var today = new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric', timeZone:'Asia/Kolkata'});
-  var msg = 'Hi Satyajit! I am ' + name;
+  var msg = 'Hi Satyajit v Dutta! I am ' + name;
   if (org) msg += ' from ' + org;
   if (event) msg += '. We connected at ' + event;
   msg += ' on ' + today + '.';
   msg += ' I just viewed your Pithonix card and would love to explore how we can collaborate in the GCC space.';
   document.getElementById('wa-btn').href = 'https://wa.me/919903089000?text=' + encodeURIComponent(msg);
 
-  var payload = JSON.stringify({
-    name: name,
-    phone: phone,
-    email: email || 'Not provided',
-    organisation: org || 'Not provided',
-    event: event || 'Not provided',
-    card: 'Satyajit Dutta — card.pithonix.ai',
-    time: new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})
-  });
-
-  fetch(MAKE_WEBHOOK, {
+  fetch(LEAD_API, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: payload
-  }).catch(function(){});
-
-  fetch(FORMSPREE, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: payload
+    body: JSON.stringify({
+      name: name,
+      phone: phone,
+      email: email || 'Not provided',
+      organisation: org || 'Not provided',
+      event: event || 'Not provided',
+      card: 'Satyajit v Dutta — card.pithonix.ai',
+    })
   }).catch(function(){});
 });
 
@@ -288,11 +278,11 @@ function showToast(msg) {
 }
 
 function saveContact() {
-  var v = 'BEGIN:VCARD\nVERSION:3.0\nN:Dutta;Satyajit;;;\nFN:Satyajit Dutta\nORG:Pithonix.ai\nTITLE:Founder & CEO\nTEL;TYPE=WORK,CELL:+919652640505\nTEL;TYPE=CELL:+919903089000\nEMAIL:satyajitv.d@pithonix.ai\nURL:https://gcc-playbook.pithonix.ai\nADR;TYPE=WORK:;;Hyderabad;Telangana;;India\nNOTE:Founder of Pithonix.ai. India GCC Intelligence Platform. AI GCC Simulator: gcc-playbook.pithonix.ai\nEND:VCARD';
+  var v = 'BEGIN:VCARD\nVERSION:3.0\nN:Dutta;Satyajit;v;;\nFN:Satyajit v Dutta\nORG:Pithonix.ai\nTITLE:Founder & CEO\nTEL;TYPE=WORK,CELL:+919652640505\nTEL;TYPE=CELL:+919903089000\nEMAIL:satyajitv.d@pithonix.ai\nURL:https://gcc-playbook.pithonix.ai\nADR;TYPE=WORK:;;Hyderabad;Telangana;;India\nNOTE:Founder of Pithonix.ai. India GCC Intelligence Platform. AI GCC Simulator: gcc-playbook.pithonix.ai\nEND:VCARD';
   var b = new Blob([v], {type: 'text/vcard'});
   var u = URL.createObjectURL(b);
   var a = document.createElement('a');
-  a.href = u; a.download = 'Satyajit_Dutta_Pithonix.vcf';
+  a.href = u; a.download = 'Satyajit_v_Dutta_Pithonix.vcf';
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(u);
   showToast('Contact downloaded. Open to save!');
