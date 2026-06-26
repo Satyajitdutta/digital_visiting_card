@@ -277,17 +277,30 @@ document.getElementById('g-btn').addEventListener('click', function() {
   msg += ' I just viewed your Pithonix card and would love to explore how we can collaborate in the GCC space.';
   document.getElementById('wa-btn').href = 'https://wa.me/919903089000?text=' + encodeURIComponent(msg);
 
+  var leadData = {
+    name: name,
+    phone: phone,
+    email: email || 'Not provided',
+    organisation: org || 'Not provided',
+    event: event || 'Not provided',
+    card: 'Satyajit v Dutta — card.pithonix.ai',
+  };
+
+  // Primary: Vercel API (stores permanently + Formspree email)
   fetch(LEAD_API, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      name: name,
-      phone: phone,
-      email: email || 'Not provided',
-      organisation: org || 'Not provided',
-      event: event || 'Not provided',
-      card: 'Satyajit v Dutta — card.pithonix.ai',
-    })
+    body: JSON.stringify(leadData)
+  }).catch(function(){});
+
+  // Backup: Web3Forms direct email to satyajitv.d@pithonix.ai
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(Object.assign({}, leadData, {
+      access_key: '4b747568-54ad-4595-ba29-675493a58794',
+      subject: 'New Card Lead: ' + name + (org ? ' — ' + org : ''),
+    }))
   }).catch(function(){});
 });
 
