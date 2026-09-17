@@ -134,20 +134,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <div id="gate">
   <img src="logo.png" alt="Pithonix" class="g-logo">
-  <div class="g-title">START WITH AN INTRODUCTION<br><span>Every great connection begins with one</span></div>
-  <div class="g-sub">You are about to connect with someone who is helping build India's GCC ecosystem. Share your details and let's start a real conversation.</div>
+  <div class="g-title">LET'S EXCHANGE CARDS<br><span>One tap, and we are connected</span></div>
+  <div class="g-sub">Save my details, and share yours back. Takes one tap.</div>
   <div class="g-line"></div>
   <div class="g-form">
-    <input class="g-input" id="g-name" type="text" placeholder="Your Full Name *" autocomplete="name">
-    <input class="g-input" id="g-phone" type="tel" placeholder="Your Mobile Number *" autocomplete="tel">
-    <input class="g-input" id="g-email" type="email" placeholder="Your Email (optional)" autocomplete="email">
-    <input class="g-input" id="g-org" type="text" placeholder="Your Organisation (optional)">
-    <input class="g-input" id="g-event" type="text" placeholder="Where did we meet? (Event / City)">
-    <div class="g-err" id="g-err">Please enter your name and mobile to continue.</div>
-    <button id="g-btn">&#128640; View Profile &amp; Connect</button>
+    <button id="g-save" style="width:100%;background:var(--green);color:#04150c;border:none;border-radius:10px;padding:17px;font-size:15px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;letter-spacing:0.3px;box-shadow:0 0 28px rgba(0,212,110,0.22);">&#128229; Save My Contact</button>
+    <button id="g-pick" style="display:none;width:100%;background:var(--gold);color:#1a0e00;border:none;border-radius:10px;padding:17px;font-size:15px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;letter-spacing:0.3px;box-shadow:0 0 28px rgba(212,164,56,0.25);">&#128228; Share My Details Back</button>
+    <div id="g-manual">
+      <input class="g-input" id="g-name" type="text" placeholder="Your Name *" autocomplete="name" style="margin-bottom:10px;">
+      <input class="g-input" id="g-phone" type="tel" placeholder="Your Mobile *" autocomplete="tel">
+      <div class="g-err" id="g-err">Please enter your name and mobile.</div>
+      <button id="g-btn" style="margin-top:10px;">&#128640; Share &amp; View Profile</button>
+    </div>
   </div>
-  <div class="g-skip" id="g-skip">Skip for now</div>
-  <div class="g-note">&#128274; Details shared only with the Pithonix.ai team</div>
+  <div class="g-skip" id="g-skip">Just let me view the card</div>
+  <div class="g-note">&#128274; Details shared only with Shreedhar Gudey &middot; Pithonix.ai</div>
 </div>
 
 <div class="scan-line"></div>
@@ -239,70 +240,108 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 
 <script>
-var MAKE_WEBHOOK = 'https://hook.eu1.make.com/odvi6k6vnyu839ha3hu2pc5utpalcesj';
-var FORMSPREE    = 'https://formspree.io/f/mvzwkqyl';
+var LEAD_API   = 'https://card-api-lemon.vercel.app/api/lead';
+var W3_KEY     = '4b747568-54ad-4595-ba29-675493a58794';
+var MY_WA      = '919100020622';
+var MY_NAME    = 'Shreedhar Gudey';
 
-document.getElementById('g-btn').addEventListener('click', function() {
-  var name  = document.getElementById('g-name').value.trim();
-  var phone = document.getElementById('g-phone').value.trim();
-  var email = document.getElementById('g-email').value.trim();
-  var org   = document.getElementById('g-org').value.trim();
-  var event = document.getElementById('g-event').value.trim();
+/* ---------- 1. SAVE MY CONTACT (vCard download) ---------- */
+document.getElementById('g-save').addEventListener('click', function(){
+  saveContact();
+});
 
-  if (!name || !phone) {
-    document.getElementById('g-err').style.display = 'block';
-    return;
-  }
+/* ---------- 2. ONE-TAP SHARE BACK (Android Chrome Contact Picker) ---------- */
+var hasPicker = ('contacts' in navigator) && ('ContactsManager' in window);
+if (hasPicker) {
+  var pick = document.getElementById('g-pick');
+  pick.style.display = 'block';
+  document.getElementById('g-manual').style.display = 'none';
+  pick.addEventListener('click', function(){
+    navigator.contacts.select(['name','tel','email'], {multiple:false})
+      .then(function(sel){
+        if (!sel || !sel.length) return;
+        var c = sel[0];
+        var nm = (c.name && c.name[0]) ? c.name[0] : '';
+        var ph = (c.tel && c.tel[0]) ? c.tel[0] : '';
+        var em = (c.email && c.email[0]) ? c.email[0] : '';
+        if (!nm || !ph) { fallbackManual(); return; }
+        completeExchange(nm, ph, em, '', '');
+      })
+      .catch(function(){ fallbackManual(); });
+  });
+}
+function fallbackManual(){
+  document.getElementById('g-pick').style.display = 'none';
+  document.getElementById('g-manual').style.display = 'block';
+}
 
+/* ---------- 3. MANUAL FALLBACK (2 fields) ---------- */
+document.getElementById('g-btn').addEventListener('click', function(){
+  var nm = document.getElementById('g-name').value.trim();
+  var ph = document.getElementById('g-phone').value.trim();
+  if (!nm || !ph) { document.getElementById('g-err').style.display='block'; return; }
+  completeExchange(nm, ph, '', '', '');
+});
+
+/* ---------- 4. SEND LEAD + OPEN WHATSAPP ---------- */
+function completeExchange(name, phone, email, org, evt){
   document.getElementById('gate').style.display = 'none';
-  showToast('Welcome ' + name.split(' ')[0] + '! Great to connect!');
+  showToast('Thanks ' + name.split(' ')[0] + '! Details shared.');
 
-  // Build personalised WhatsApp message
   var today = new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric', timeZone:'Asia/Kolkata'});
-  var msg = 'Hi Shreedhar! I am ' + name;
+  var msg = 'Hi ' + MY_NAME + '! I am ' + name;
   if (org) msg += ' from ' + org;
-  if (event) msg += '. We connected at ' + event;
-  msg += ' on ' + today + '.';
+  msg += '. We connected on ' + today + '.';
   msg += ' I just viewed your Pithonix card and would love to explore how we can collaborate in the GCC space.';
-  document.getElementById('wa-btn').href = 'https://wa.me/919100020622?text=' + encodeURIComponent(msg);
+  var waHref = 'https://wa.me/' + MY_WA + '?text=' + encodeURIComponent(msg);
+  var waBtn = document.getElementById('wa-btn');
+  if (waBtn) waBtn.href = waHref;
 
-  var payload = JSON.stringify({
+  var leadData = {
     name: name,
     phone: phone,
     email: email || 'Not provided',
     organisation: org || 'Not provided',
-    event: event || 'Not provided',
-    card: 'Shreedhar Gudey — card.pithonix.ai/sreedhar.html',
-    time: new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})
-  });
+    event: evt || 'Not provided',
+    card: 'Shreedhar Gudey (CFO) - card.pithonix.ai/sreedhar.html'
+  };
 
-  fetch(MAKE_WEBHOOK, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: payload
+  fetch(LEAD_API, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(leadData)
   }).catch(function(){});
 
-  fetch(FORMSPREE, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: payload
+  fetch('https://api.web3forms.com/submit', {
+    method:'POST', headers:{'Content-Type':'application/json', 'Accept':'application/json'},
+    body: JSON.stringify(Object.assign({}, leadData, {
+      access_key: W3_KEY,
+      from_name: 'Pithonix Card',
+      subject: 'New Card Lead: ' + name + (org ? ' - ' + org : '')
+    }))
   }).catch(function(){});
-});
 
-document.getElementById('g-skip').addEventListener('click', function() {
+  // nudge them to send the WhatsApp hi (they press send)
+  setTimeout(function(){
+    if (confirm('Send ' + MY_NAME.split(' ')[0] + ' a quick hello on WhatsApp?')) {
+      window.open(waHref, '_blank');
+    }
+  }, 900);
+}
+
+document.getElementById('g-skip').addEventListener('click', function(){
   document.getElementById('gate').style.display = 'none';
 });
 
-function showToast(msg) {
+function showToast(msg){
   var t = document.getElementById('toast');
   t.textContent = msg;
   t.style.transform = 'translateX(-50%) translateY(0)';
-  setTimeout(function(){ t.style.transform = 'translateX(-50%) translateY(100px)'; }, 3000);
+  setTimeout(function(){ t.style.transform='translateX(-50%) translateY(100px)'; }, 3000);
 }
 
-function saveContact() {
-  var v = 'BEGIN:VCARD\nVERSION:3.0\nN:Gudey;Shreedhar;;;\nFN:Shreedhar Gudey\nORG:Pithonix AI India Private Limited\nTITLE:Chief Financial Officer\nTEL;TYPE=CELL:+919100020622\nEMAIL;TYPE=WORK:sreedhar.g@pithonix.ai\nURL:https://gcc-playbook.pithonix.ai\nADR;TYPE=WORK:;;Hyderabad;;;;India\nNOTE:Chief Financial Officer at Pithonix AI India Private Limited. India GCC Intelligence Platform. AI GCC Simulator: gcc-playbook.pithonix.ai\nEND:VCARD';
-  var b = new Blob([v], {type: 'text/vcard'});
+function saveContact(){
+  var v = 'BEGIN:VCARD\nVERSION:3.0\nN:Gudey;Shreedhar;;;\nFN:Shreedhar Gudey\nORG:Pithonix AI India Private Limited\nTITLE:Chief Financial Officer\nTEL;TYPE=CELL:+919100020622\nEMAIL:sreedhar.g@pithonix.ai\nURL:https://card.pithonix.ai/sreedhar.html\nADR;TYPE=WORK:;;Hyderabad;Telangana;;India\nNOTE:CFO of Pithonix AI. India GCC Intelligence Platform.\nEND:VCARD';
+  var b = new Blob([v], {type:'text/vcard'});
   var u = URL.createObjectURL(b);
   var a = document.createElement('a');
   a.href = u; a.download = 'Shreedhar_Gudey_Pithonix.vcf';
